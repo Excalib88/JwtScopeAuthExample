@@ -1,4 +1,4 @@
-namespace ExampleApp.Web;
+namespace ExampleApp.Web.Middlewares;
 
 public class SeedMiddleware
 {

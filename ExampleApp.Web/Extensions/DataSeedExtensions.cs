@@ -1,3 +1,5 @@
+using ExampleApp.Web.Middlewares;
+
 namespace ExampleApp.Web.Extensions;
 
 public static class DataSeedExtensions

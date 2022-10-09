@@ -19,16 +19,20 @@ public class DataSeeder
         {
             return;
         }
-            
-        await _context.Scopes.AddRangeAsync(
-            new ScopeEntity(Scope.ProfileRead), 
-            new ScopeEntity(Scope.ProfileAllRead), 
-            new ScopeEntity(Scope.ProfileWrite), 
-            new ScopeEntity(Scope.ProfileAllWrite), 
-            new ScopeEntity(Scope.ScopesRead), 
-            new ScopeEntity(Scope.ScopesAllRead), 
-            new ScopeEntity(Scope.ScopesWrite), 
-            new ScopeEntity(Scope.ScopesAllWrite));
+
+        var scopes = new[]
+        {
+            Scope.ProfileRead,
+            Scope.ProfileAllRead,
+            Scope.ProfileWrite,
+            Scope.ProfileAllWrite,
+            Scope.ScopesRead,
+            Scope.ScopesAllRead,
+            Scope.ScopesWrite,
+            Scope.ScopesAllWrite
+        };
+        
+        await _context.Scopes.AddRangeAsync(scopes.Select(x => new ScopeEntity(x)));
         await _context.SaveChangesAsync();
     }
 }
