@@ -3,9 +3,11 @@ using System.Text.Json;
 using ExampleApp.DataAccess;
 using ExampleApp.DataAccess.Entities;
 using ExampleApp.Web;
+using ExampleApp.Web.Extensions;
 using ExampleApp.Web.Models.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +20,7 @@ builder.Services.AddDbContext<AppDbContext>(o =>
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<DataSeeder>();
 builder.Services.AddScoped<UserManager<AppUser>>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddIdentity<AppUser, IdentityRole<long>>(options =>
@@ -84,6 +87,9 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+
+// seed scopes
+app.UseDataSeeder();
 
 if (app.Environment.IsDevelopment())
 {

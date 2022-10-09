@@ -28,7 +28,7 @@ public class ScopesController : ApiBaseController
         return Ok(new {scopes, scopeString});
     }
 
-    [HttpGet]
+    [HttpGet("my")]
     [Authorize(Scope.ScopesRead)]
     public async Task<IActionResult> GetMy()
     {
