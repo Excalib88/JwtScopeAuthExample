@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using ExampleApp.DataAccess.Entities;
 using ExampleApp.Web.Models.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -9,7 +10,20 @@ namespace ExampleApp.Web.Extensions;
 
 public static class JwtExtensions
 {
-    public static string GenerateToken(this AppUser user, JwtOptions jwtOptions)
+    public static (string, DateTime) GenerateRefreshToken(this AppUser user, JwtOptions jwtOptions)
+    {
+        var refreshTokenExpireAt = DateTime.UtcNow.AddMinutes(jwtOptions.RefreshTokenExpire);
+        var data = new RefreshTokenData
+        {
+            Expire = refreshTokenExpireAt, 
+            UserId = user.Id, 
+            Key = StringRandomizer.Randomize()
+        };
+        
+        return (AesEncryptor.Encrypt(jwtOptions.Secret, JsonSerializer.Serialize(data)), refreshTokenExpireAt);
+    }
+    
+    public static string GenerateAccessToken(this AppUser user, JwtOptions jwtOptions)
     {
         var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret));
         var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);

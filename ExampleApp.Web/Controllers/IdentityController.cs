@@ -34,13 +34,19 @@ public class IdentityController : ApiBaseController
         {
             return BadRequest();
         }
+
+        if (!await _userManager.CheckPasswordAsync(user, request.Password)) return Unauthorized();
         
-        if (await _userManager.CheckPasswordAsync(user, request.Password))
+        var (refreshToken, refreshTokenExpireAt) = user.GenerateRefreshToken(_jwtOptions);
+        user.RefreshToken = refreshToken;
+        await _context.SaveChangesAsync();
+        
+        return Ok(new LoginResponse
         {
-            return Ok(new { token = user.GenerateToken(_jwtOptions) });
-        }
-        
-        return Unauthorized();
+            AccessToken = user.GenerateAccessToken(_jwtOptions), 
+            RefreshToken = refreshToken,
+            RefreshTokenExpireAt = refreshTokenExpireAt
+        });
     }
 
     [HttpPost("register")]
